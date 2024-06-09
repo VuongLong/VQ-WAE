@@ -1,0 +1,36 @@
+path_specific: "celeba_wqvae/"
+  
+dataset:
+  name: 'CelebA'
+  shape: (3, 64, 64)
+  dim_x: 12288 # 3 * 64 * 64
+
+model:
+  name: "VQWAE"
+
+network:
+  name: "resnet"
+  num_rb: 6
+
+train:
+  lr: 0.001
+  bs: 32
+  epoch_max: 70
+
+quantization:
+  name: 'FVQWAE'
+  global_optimization: True
+  fixed_weight: False
+  size_dict: 512
+  dim_dict: 64
+  beta: 1e-3
+  kl_regularization: 0.0
+  kan_iteration: 5
+  kan_lr: 1e-1
+  epsilon: 0.1
+
+generation:
+  lr: 0.0002
+  n_critic: 5
+  temperature: 1.0
+  

@@ -1,0 +1,41 @@
+path_specific: "cifar10_wqvae/"
+  
+dataset:
+  name: 'CIFAR10'
+  shape: (3, 32, 32)
+  dim_x: 3072 # 3 * 32 * 32
+
+model:
+  name: "VQWAE"
+
+network:
+  name: "resnet"
+  num_rb: 2 
+
+train:
+  lr: 0.001
+  bs: 32
+  epoch_max: 100
+
+quantization:
+  name: 'FVQWAE'
+  global_optimization: False
+  fixed_weight: False
+  size_dict: 512
+  dim_dict: 64
+  beta: 1e-3
+  init_weight: 'uniform' # gaussian150, peaked, uniform, gaussian200
+  kl_regularization: 1.0
+  kan_iteration: 5
+  kan_lr: 1e-3
+  epsilon: 0.1
+  temperature:
+    init: 0.02
+    decay: 0.0001
+    min: 0.02
+
+generation:
+  lr: 0.0002
+  n_critic: 5
+  temperature: 1.0
+  
