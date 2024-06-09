@@ -114,31 +114,11 @@ class VQWAE(nn.Module):
 				print("INIT UNIFORM")
 				self.codebook_weight = nn.Parameter(torch.ones(self.size_dict)/self.size_dict)
 		else:
-			
-			if cfgs.quantization.init_weight == 'gaussian':
-				print("INIT GAUSSIAN")
-				init_weights = torch.log(init_gaussian_array(100, self.size_dict))
-				init_weights = init_weights.cpu().numpy() 
-				self.codebook_weight = nn.Parameter(torch.ones(64, self.size_dict)*torch.tensor(init_weights))
-			elif cfgs.quantization.init_weight == 'gaussian200':
-				print("INIT GAUSSIAN-200")
-				init_weights = torch.log(init_gaussian_array(200, self.size_dict))
-				init_weights = init_weights.cpu().numpy() 
-				self.codebook_weight = nn.Parameter(torch.ones(64, self.size_dict)*torch.tensor(init_weights))
-			elif cfgs.quantization.init_weight == 'gaussian150':
-				print("INIT GAUSSIAN-150")
-				init_weights = torch.log(init_gaussian_array(150, self.size_dict))
-				init_weights = init_weights.cpu().numpy() 
-				self.codebook_weight = nn.Parameter(torch.ones(64, self.size_dict)*torch.tensor(init_weights))
-			elif cfgs.quantization.init_weight == 'peaked':
-				print("INIT PEAKED")
-				init_weights = torch.ones(self.size_dict)/self.size_dict/2
-				init_weights[206:306]+=0.005
-				init_weights = torch.log(init_weights).cpu().numpy() 
-				self.codebook_weight = nn.Parameter(torch.ones(64, self.size_dict)*torch.tensor(init_weights))
-			else:
-				print("INIT UNIFORM")
-				self.codebook_weight = nn.Parameter(torch.ones(64, self.size_dict)/self.size_dict)
+			print("INIT UNIFORM")
+			self.codebook_weight = nn.Parameter(torch.zeros(64, self.size_dict)/self.size_dict)
+			for i in range(64):
+				self.codebook_weight.data[i, 8*i:8*(i+1)]=1.0
+
 
 
 		##############################################
@@ -167,7 +147,6 @@ class VQWAE(nn.Module):
 			# VQ-model
 			##############################################
 			z_from_encoder = self.encoder(real_images)
-			#z_from_encoder = self.pre_quantization_conv_m(z_from_encoder)
 
 			z_quantized, loss_latent, perplexity = self.quantizer(z_from_encoder, self.codebook, self.codebook_weight, flg_train)
 			latents = dict(z_from_encoder=z_from_encoder, z_to_decoder=z_quantized)
@@ -181,7 +160,6 @@ class VQWAE(nn.Module):
 			return x_reconst, latents, loss
 		else:
 			z_from_encoder = self.encoder(real_images)
-			#z_from_encoder = self.pre_quantization_conv_m(z_from_encoder)
 
 			z_quantized, min_encodings, e_indices, perplexity = self.quantizer._inference(z_from_encoder, self.codebook)
 			# Decoding
@@ -198,7 +176,7 @@ class VQWAE(nn.Module):
 
 		if flg_train: 
 			mse = F.mse_loss(x_reconst, x)
-			loss_all = 200*mse + loss_latent 
+			loss_all = mse + loss_latent 
 
 		else:
 			mse = torch.mean((x_reconst - x)**2)
