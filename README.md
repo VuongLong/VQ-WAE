@@ -75,31 +75,6 @@ We adapt code from https://github.com/CompVis/taming-transformers, particularly:
 Please replace **quantize.py** in **/taming-transfromers/taming/modules/vqvae/quantize.py** by our provided **taming/quantize.py** and run experiment following instructions from taming-transformers repo.
 
 
-
-### Visualization:
-
-The visualization presented in paper can be found in two notebook files:
-- visual_MNIST-codebook-size.ipynb
-- visual_MNIST-beta.ipynb
-
-
-
-### List of yaml files: models work on continuous/discrete data distributions
-| Config file | Description |
-|---|---|
-| cifar10_sqvae_C512.yaml | Gaussian SQ-VAE (I) on CIFAR10 with codebook size of 512 |
-| celeba_sqvae_C512.yaml | Gaussian SQ-VAE (I) on CelebA with codebook size of 512  |
-| mnist_sqvae_C512.yaml | Gaussian SQ-VAE (I) on MNIST with codebook size of 512 |
-| svhn_sqvae_C512.yaml | Gaussian SQ-VAE (I) on SVHN with codebook size of 512  |
-| cifar10_vqwae_C512.yaml | VQ-WAE on CIFAR10 with codebook size of 512 |
-| celeba_vqwae_C512.yaml | VQ-WAE on CelebA with codebook size of 512  |
-| mnist_vqwae_C512.yaml | VQ-WAE on MNIST with codebook size of 512 |
-| svhn_vqwae_C512.yaml | VQ-WAE on SVHN with codebook size of 512  |
-| celeba_fast_vqwae_C512.yaml | VQ-WAE (with entropic semi-discrete dual OT: for fast computation) from on CelebA with codebook size of 512  |
-
-
-
-
 ## Experiments
 "[checkpoint_foldername_with_timestep]" means the folder names under the path "[configs.defaults._C.path + '/' + cfgs.path_spcific]".
 These folder names are consist of the model names, the seed indices and the timestamps.
@@ -114,9 +89,3 @@ ot
 
 ## Acknowledgements
 Codes are adapted from https://github.com/sony/sqvae/tree/main/vision. We thank them for their excellent projects.
-
-cifar10_vqwae_C512
-checkpoint_path/cifar10_wqvae/resnet_seed0_0207_1720
-Best models were loaded!!
-Train           Loss: 0.0036, MSE: 0.0036, Perplexity: 499.4894, Time: 199.113 sec
-Test            Loss: 0.0037, MSE: 0.0037, Perplexity: 498.9264, Time: 47.744 sec
