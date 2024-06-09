@@ -5,7 +5,6 @@ from torch import nn
 
 from model import VQWAE, GaussianSQVAE
 from util import *
-from util_plot import tsne_plot
 
 class TrainerBase(nn.Module):
     def __init__(self, cfgs, flgs, train_loader, val_loader, test_loader):
@@ -97,7 +96,6 @@ class TrainerBase(nn.Module):
     
     def _set_temperature(self, step, param):
         temperature = np.max([param.init * np.exp(-param.decay*step), param.min])
-        print(temperature)
         # import pdb; pdb.set_trace()
 
         return temperature
@@ -118,36 +116,6 @@ class TrainerBase(nn.Module):
         raise NotImplementedError()
     
 
-    ## Visualization    
-
-    def tsne(self, save_name):
-        data_loader = self.test_loader
-        len_data = len(data_loader.dataset)
-        self.model.eval()
-        print('Evaluating on: ', len_data, 'samples')
-        A ,B = [], []
-        with torch.no_grad():
-            iter_loader = iter(data_loader)
-            i = 0
-            for x, y in data_loader:
-                x = x.cuda()
-                vq_encoder_output = self.model.module.pre_quantization_conv_m(self.model.module.encoder(x))
-
-                if self.cfgs.model.param_var_q == 'gaussian_1':
-                    log_var_q = torch.tensor([0.0], device="cuda")
-                    param_q = (log_var_q.exp() + self.model.module.log_param_q_scalar.exp())
-                    z_q, min_encodings, e_indices, _ = self.model.module.quantizer._inference(vq_encoder_output, param_q, self.model.module.codebook)
-                else:
-                    z_q, min_encodings, e_indices, _ = self.model.module.quantizer._inference(vq_encoder_output, self.model.module.codebook)
-
-                z_q = z_q.view(x.shape[0], -1)
-                A += z_q.tolist()
-                B += y.tolist()
-                if (i+1) % 10 == 0:
-                    print(i)
-                i+=1
-        tsne_plot(A, B)
-        plt.savefig('plots/'+save_name)
 
     def generate_reconstructions(self):
         raise NotImplementedError()

@@ -2,7 +2,6 @@ import time
 
 from trainer_base import TrainerBase
 from util import *
-from third_party.semseg import SegmentationMetric
 from torch import nn
 
 
@@ -22,43 +21,15 @@ class VQWAETrainer(TrainerBase):
         perplexity = []
         self.model.train()
         start_time = time.time()
+        # import pdb; pdb.set_trace()
 
-        #import pdb; pdb.set_trace()
-
-        if self.cfgs.quantization.global_optimization:
-            cb_distribution = nn.Softmax()(self.model.codebook_weight)
-        else:
-            cb_distribution = nn.Softmax(dim=1)(self.model.codebook_weight).mean(0)
-
-            # weight = nn.Softmax(dim=1)(self.model.codebook_weight)
-            # torch.topk(weight[0],3)[0].sum()
-            # torch.topk(weight[0],3)[1]
-        entropy = torch.exp(-torch.sum(cb_distribution * torch.log(cb_distribution + 1e-10)))
-        
-        print('CB_distribution: ', entropy)
-        #if entropy < 10:
-        #    import pdb; pdb.set_trace()
-
-        code_matrix = torch.sum(self.model.codebook ** 2, dim=1, keepdim=True) + torch.sum(self.model.codebook**2, dim=1) - 2 * torch.matmul(self.model.codebook, self.model.codebook.t())
-        print(code_matrix.min())
-
-        for batch_idx, (real_images, _) in enumerate(self.train_loader):
-            if self.flgs.decay:
-                if batch_idx == 0:
-                    step = (epoch - 1) * len(self.train_loader) + batch_idx + 1
-                    temperature_current = self._set_temperature(
-                        step, self.cfgs.quantization.temperature)
-                    self.model.quantizer.set_temperature(temperature_current)
-            
-            real_images = real_images.cuda()
-
-            _, _, loss = self.model(real_images, flg_train=True, flg_quant_det=False)
-
-
+        for batch_idx, (x, _) in enumerate(self.train_loader):
+            x = x.cuda()
+            _, _, loss = self.model(x, flg_train=True, flg_quant_det=False)
             self.optimizer.zero_grad()
             loss["all"].backward()
             self.optimizer.step()
-
+            
             train_loss.append(loss["all"].detach().cpu().item())
             ms_error.append(loss["mse"].detach().cpu().item())
             perplexity.append(loss["perplexity"].detach().cpu().item())
@@ -126,6 +97,7 @@ class VQWAETrainer(TrainerBase):
         len_data  = len(data_loader.dataset)
         save_data = None
         save_label = None
+        
         with torch.no_grad():
             i = 0
             for x, y in data_loader:
@@ -133,7 +105,6 @@ class VQWAETrainer(TrainerBase):
                 if len(y.shape) > 1:
                     y = y.sum(1)
                 x_reconst, min_encodings, e_indices, loss = self.model(x)
-                #import pdb; pdb.set_trace()
                 
                 histogram += min_encodings.reshape(x_reconst.shape[0], 64, self.cfgs.quantization.size_dict).sum(0)
                 recon_loss += ((x_reconst - x)**2).mean(3).mean(2).mean(1).sum()
@@ -157,6 +128,7 @@ class VQWAETrainer(TrainerBase):
             recon_loss /= len_data  
             e_mean = histogram.sum(0)/(len_data*x_reconst.shape[-1]*x_reconst.shape[-1]/16)
             perplexity = torch.exp(-torch.sum(e_mean * torch.log(e_mean + 1e-10)))
+            
             if mode == 'test':
                 np.savez(save_latent_path, data=save_data, label=save_label, hist=histogram.cpu().numpy()) 
                 np.savez(save_latent_path+'codebook_weight', weight=self.model.codebook_weight.cpu().numpy()) 

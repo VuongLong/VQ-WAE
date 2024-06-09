@@ -19,12 +19,12 @@ train:
 
 quantization:
   name: 'VQWAE'
-  global_optimization: True
+  global_optimization: False
   fixed_weight: False
   size_dict: 512
   dim_dict: 64
   beta: 1e-3
-  init_weight: 'uniform' # gaussian, peaked, uniform, gaussian200
+  init_weight: 'uniform'
   kl_regularization: 1.0
 
 generation:

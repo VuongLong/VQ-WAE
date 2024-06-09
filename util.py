@@ -7,7 +7,6 @@ import torch
 from torchvision import datasets, transforms
 from torch.utils.data.dataset import Subset
 from torch.utils.data import DataLoader
-from third_party.celebamask_hq import Data_Loader
 
 import time
 import os

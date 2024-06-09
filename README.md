@@ -15,13 +15,14 @@ python main.py -c "cifar10_sqvae_C512.yaml" --save
 ```
 Example 3: VQ-WAE on CIFAR10
 ```
-python main.py -c "cifar10_vqwae_C512.yaml" --save --dbg --gpu 1
+python main.py -c "cifar10_vqwae_C512.yaml" --save --dbg --gpu 3
 ```
 python main.py -c "mnist_vqwae_C512.yaml" --save --dbg --gpu 2
 
 python main.py -c "svhn_vqwae_C512.yaml" --save --dbg --gpu 3
 
-python main.py -c "cifar10_vqwae_C512_init.yaml" --save --dbg --gpu 2
+### Train a model with dual form WS
+python main.py -c "cifar10_vqwae_C512_dual_from.yaml" --save --dbg --gpu 3
 
 ### Test a trained model
 Example 1: VQ-WAE on CIFAR10
@@ -113,3 +114,8 @@ ot
 ## Acknowledgements
 Codes are adapted from https://github.com/sony/sqvae/tree/main/vision. We thank them for their excellent projects.
 
+cifar10_vqwae_C512
+checkpoint_path/cifar10_wqvae/resnet_seed0_0207_1720
+Best models were loaded!!
+Train           Loss: 0.0036, MSE: 0.0036, Perplexity: 499.4894, Time: 199.113 sec
+Test            Loss: 0.0037, MSE: 0.0037, Perplexity: 498.9264, Time: 47.744 sec

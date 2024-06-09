@@ -1,7 +1,7 @@
 from yacs.config import CfgNode as CN
 
 _C = CN(new_allowed=True)
-_C.path = "/home/bta/Long/ICML_VQWAE/checkpoint_path" # To be set in advance
+_C.path = "checkpoint_path" # To be set in advance
 _C.path_dataset = "/home/bta/Long/ICML_VQWAE/data" # To be set in advance
 _C.nworker = 2
 _C.list_dir_for_copy = ['', 'networks/'] # []
@@ -20,13 +20,13 @@ _C.train.epoch_max = 100
 
 _C.quantization = CN(new_allowed=True)
 _C.quantization.temperature = CN(new_allowed=True)
-_C.quantization.temperature.init = 0.5
+_C.quantization.temperature.init = 1.0
 _C.quantization.temperature.decay = 0.00001
 _C.quantization.temperature.min = 0.0
 _C.quantization.beta = 0.25
 
 _C.generation = CN(new_allowed=True)
-_C.generation.base_path = "/home/bta/Long/ICML_VQWAE/latent_results/"
+_C.generation.base_path = "latent_results/"
 _C.generation.data = "latent_block.npz"
 _C.generation.save_path = "pixelcnn"
 
