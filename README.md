@@ -1,4 +1,5 @@
-# VQ-WAE
+# VQ-WAE: [Vector Quantized Wasserstein Auto-Encoder](https://arxiv.org/abs/2302.05917)
+
 ## Training
 The training of a model can be done by calling main.py with the corresponding yaml file. The list of yaml files can be found below.
 Please refer to main.py (or execute 'python main.py --help') for the usage of extra arguments.
@@ -22,7 +23,7 @@ python main.py -c "mnist_vqwae_C512.yaml" --save --dbg --gpu 2
 python main.py -c "svhn_vqwae_C512.yaml" --save --dbg --gpu 3
 
 ### Train a model with dual form WS
-python main.py -c "cifar10_vqwae_C512_dual_from.yaml" --save --dbg --gpu 3
+python main.py -c "cifar10_vqwae_C512_dual_form.yaml" --save --dbg --gpu 3
 
 ### Test a trained model
 Example 1: VQ-WAE on CIFAR10

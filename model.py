@@ -3,7 +3,7 @@ import torch
 import torch.nn.functional as F
 from torch import nn
 
-from quantizer import WSVectorQuantizer, DuelForm_WSVectorQuantizer, Global_DuelForm_WSVectorQuantizer, VectorQuantizer, GaussianVectorQuantizer
+from quantizer import WSVectorQuantizer, DuelForm_WSVectorQuantizer, VectorQuantizer, GaussianVectorQuantizer
 import networks.mnist as net_mnist
 import networks.cifar10 as net_cifar10
 import networks.svhn as net_svhn
@@ -127,15 +127,9 @@ class VQWAE(nn.Module):
 		if cfgs.quantization.name == "VQWAE":
 			self.quantizer = WSVectorQuantizer(self.size_dict, self.dim_dict, cfgs, init_weights)
 		elif cfgs.quantization.name == "FVQWAE":
-			if cfgs.quantization.global_optimization:
-				self.kan_net1 = KantorovichNetwork(1, self.dim_dict, 1)
-				self.kan_net2 = KantorovichNetwork(1, self.dim_dict, 1)
-				self.quantizer = Global_DuelForm_WSVectorQuantizer(self.size_dict, self.dim_dict, self.kan_net1, self.kan_net2, cfgs, init_weights)
-			else:
-				self.kan_net1 = KantorovichNetwork(64, self.dim_dict, 1)
-				self.kan_net2 = KantorovichNetwork(64, self.dim_dict, 1)
-
-				self.quantizer = DuelForm_WSVectorQuantizer(self.size_dict, self.dim_dict, self.kan_net1, self.kan_net2, cfgs, init_weights)
+			self.kan_net1 = KantorovichNetwork(1, self.dim_dict, 1)
+			self.kan_net2 = KantorovichNetwork(1, self.dim_dict, 1)
+			self.quantizer = DuelForm_WSVectorQuantizer(self.size_dict, self.dim_dict, self.kan_net1, self.kan_net2, cfgs, init_weights)
 		else:
 			self.quantizer = VectorQuantizer(self.size_dict, self.dim_dict, cfgs)
 		

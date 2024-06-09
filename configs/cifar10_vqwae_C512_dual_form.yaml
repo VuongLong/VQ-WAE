@@ -19,7 +19,7 @@ train:
 
 quantization:
   name: 'FVQWAE'
-  global_optimization: False
+  global_optimization: True
   fixed_weight: False
   size_dict: 512
   dim_dict: 64

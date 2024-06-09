@@ -49,8 +49,7 @@ if __name__ == "__main__":
     
     ## Experimental setup
     args = arg_parse()
-    if args.gpu != "":
-        os.environ["CUDA_VISIBLE_DEVICES"] = args.gpu
+    os.environ["CUDA_VISIBLE_DEVICES"] = str(args.gpu)
     cfgs, flgs = load_config(args)
     print("[Checkpoint path] "+cfgs.path)
     print(cfgs)

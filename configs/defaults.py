@@ -2,7 +2,7 @@ from yacs.config import CfgNode as CN
 
 _C = CN(new_allowed=True)
 _C.path = "checkpoint_path" # To be set in advance
-_C.path_dataset = "/home/bta/Long/ICML_VQWAE/data" # To be set in advance
+_C.path_dataset = "/home/long/ICML_VQWAE/data" # To be set in advance
 _C.nworker = 2
 _C.list_dir_for_copy = ['', 'networks/'] # []
 
